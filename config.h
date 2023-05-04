@@ -28,9 +28,22 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	/* class          instance          title       tags mask     isfloating   monitor */
+  { "qutebrowser",	NULL,		NULL,             0,		0,          -1 },
+  { "Emacs",		NULL,		NULL,             0,		0,          -1 },
+  { "URxvt",            "htop",         NULL,             0,            1,          -1 },
+  { "URxvt",            "term",         NULL,             0,            1,          -1 },
+  { "URxvt",            "neomutt",      NULL,             0,            1,          -1 },
+  { "URxvt",            "mpv",          NULL,             0,            1,          -1 },
+  { "URxvt",            "fm",           NULL,             0,            1,          -1 },
+  { "URxvt",            "mixer",	NULL,             0,            1,          -1 },
+
+  { "st-256color",		"htop",         NULL,             0,            1,          -1 },
+  { "st-256color",		"term",         NULL,             0,            1,          -1 },
+  { "st-256color",		"neomutt",      NULL,             0,            1,          -1 },
+  { "st-256color",		"mpv",          NULL,             0,            1,          -1 },
+  { "st-256color",		"fm",           NULL,             0,            1,          -1 },
+  { "st-256color",		"mixer",	NULL,             0,            1,          -1 },
 };
 
 /* layout(s) */
