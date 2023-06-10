@@ -20,6 +20,19 @@ static const char *colors[][3]      = {
 	[SchemeSel]  = { col_gray4, col_gray5, col_gray2 },
 };
 
+/* [[ Scratchpads Config ]] */
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+const char *spcmd1[] = {"st", "-n", "spterm", "-g", "144x41", NULL };
+const char *spcmd2[] = {"st", "-n", "spfm", "-g", "144x41", "-e", "ranger", NULL };
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"spterm",      spcmd1},
+	{"spranger",    spcmd2},
+};
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
@@ -28,22 +41,9 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class          instance          title       tags mask     isfloating   monitor */
-  { "qutebrowser",	NULL,		NULL,             0,		0,          -1 },
-  { "Emacs",		NULL,		NULL,             0,		0,          -1 },
-  { "URxvt",            "htop",         NULL,             0,            1,          -1 },
-  { "URxvt",            "term",         NULL,             0,            1,          -1 },
-  { "URxvt",            "neomutt",      NULL,             0,            1,          -1 },
-  { "URxvt",            "mpv",          NULL,             0,            1,          -1 },
-  { "URxvt",            "fm",           NULL,             0,            1,          -1 },
-  { "URxvt",            "mixer",	NULL,             0,            1,          -1 },
-
-  { "st-256color",		"htop",         NULL,             0,            1,          -1 },
-  { "st-256color",		"term",         NULL,             0,            1,          -1 },
-  { "st-256color",		"neomutt",      NULL,             0,            1,          -1 },
-  { "st-256color",		"mpv",          NULL,             0,            1,          -1 },
-  { "st-256color",		"fm",           NULL,             0,            1,          -1 },
-  { "st-256color",		"mixer",	NULL,             0,            1,          -1 },
+	/* class          instance      title		tags mask	isfloating	monitor */
+	{ NULL,		  "spterm",	NULL,		SPTAG(0),	1,		-1 },
+	{ NULL,		  "spfm",	NULL,		SPTAG(1),	1,		-1 },
 };
 
 /* layout(s) */
@@ -77,13 +77,15 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", NULL };
 static const char *termcmd[]  = { "st", NULL };
-static const char *tabtermcmd[]  = { "tabbed", "-r", "2", "st", "-w", "''", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
-	{ MODKEY,			XK_Return, spawn,          {.v = termcmd } },
-	{ Mod1Mask,			XK_Return, spawn,          {.v = tabtermcmd } },
+	{ MODKEY,						XK_Return, spawn,          {.v = termcmd } },
+	// [[ Scratchpads ]]
+	{ MODKEY|ShiftMask,				XK_Return, togglescratch,  {.ui = 0 } },
+	{ MODKEY,						XK_e,	   togglescratch,  {.ui = 1 } },
+	// [[ End scratchpads]]
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
