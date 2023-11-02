@@ -1,13 +1,13 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const int startwithgaps[]    = { 1 };	/* 1 means gaps are used by default, this can be customized for each tag */
 static const unsigned int gappx[]   = { 10 };   /* default gap between windows in pixels, this can be customized for each tag */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=11" };
+static const char *fonts[]          = { "MonoLisa:size=12:pixelsize=15:antialias=true:autohint=true:style=Regular" };
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#101010";
 static const char col_gray2[]       = "#454545";
@@ -25,12 +25,15 @@ typedef struct {
 	const char *name;
 	const void *cmd;
 } Sp;
-const char *spcmd1[] = {"st", "-n", "spterm", "-g", "144x41", NULL };
-const char *spcmd2[] = {"st", "-n", "spfm", "-g", "144x41", "-e", "ranger", NULL };
+#include "alacritty.h"
+// const char *spcmd1[] = {"st", "-n", "spterm", "-g", "134x31", NULL };
+// const char *spcmd2[] = {"st", "-n", "spfm", "-g", "144x41", "-e", "nnn", "-e",  NULL };
+// const char *spcmd3[] = {"st", "-n", "spmail", "-g", "134x31", "-e", "neomutt", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
-	{"spranger",    spcmd2},
+	{"spfm",		spcmd2},
+	{"spmail",		spcmd3},
 };
 
 /* tagging */
@@ -44,6 +47,7 @@ static const Rule rules[] = {
 	/* class          instance      title		tags mask	isfloating	monitor */
 	{ NULL,		  "spterm",	NULL,		SPTAG(0),	1,		-1 },
 	{ NULL,		  "spfm",	NULL,		SPTAG(1),	1,		-1 },
+	{ NULL,		  "spmail",	NULL,		SPTAG(2),	1,		-1 },
 };
 
 /* layout(s) */
@@ -61,6 +65,7 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod4Mask
+#define ALTKEY Mod1Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -75,16 +80,28 @@ static const Layout layouts[] = {
 #include "shiftviewclients.c"
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", NULL };
-static const char *termcmd[]  = { "st", NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-x", "650", "-y", "300", "-z", "700", "-l", "20", NULL };
+// static const char *termcmd[]  = { "st", NULL };
+static const char *termcmd[]  = { "alacritty", NULL };
+static const char *browser[] = { "qutebrowser", NULL };
+static const char *sysact[] = { "dmenu-exit", NULL };
+static const char *lockcmd[] = { "lock", NULL };
+static const char *scrot[] = { "scrot", NULL };
+static const char *maimpick[] = { "maimpick", NULL };
+static const char *screenrecord[] = { "dmenurecord", NULL };
+static const char *volup[] = { "mcontrol", "up", NULL };
+static const char *voldown[] = { "mcontrol", "down", NULL };
+static const char *voltoggle[] = { "mcontrol", "toggle", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,						XK_Return, spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_w,      spawn,          {.v = browser } },
 	// [[ Scratchpads ]]
 	{ MODKEY|ShiftMask,				XK_Return, togglescratch,  {.ui = 0 } },
 	{ MODKEY,						XK_e,	   togglescratch,  {.ui = 1 } },
+	{ MODKEY|ShiftMask,				XK_m,	   togglescratch,  {.ui = 2 } },
 	// [[ End scratchpads]]
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -94,7 +111,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY,			XK_q,      killclient,     {0} },
+	{ MODKEY,						XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
@@ -121,7 +138,17 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_q,		quit,           {0} },
+	{ MODKEY|ShiftMask,				XK_s,		spawn,          {.v = maimpick } },
+	{ MODKEY|ShiftMask,				XK_r,		spawn,          {.v = screenrecord } },
+	{ ControlMask|ALTKEY,			XK_Delete,		spawn,	{.v = sysact } },
+	{ 0,				XF86XK_PowerOff,		spawn,	{.v = sysact} },
+	{ MODKEY|ShiftMask,             XK_l,		spawn,          {.v = lockcmd } },
+	{ 0,				XK_Print,				spawn,	{.v = scrot} },
+// [[ Volume keys ]]
+	{ 0,				XF86XK_AudioLowerVolume,		spawn,	{.v = voldown} },
+	{ 0,				XF86XK_AudioRaiseVolume,		spawn,	{.v = volup} },
+	{ 0,				XF86XK_AudioMute,				spawn,	{.v = voltoggle} },
 };
 
 /* button definitions */
