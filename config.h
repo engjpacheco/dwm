@@ -48,6 +48,7 @@ static const Rule rules[] = {
 	{ NULL,		  "spterm",	NULL,		SPTAG(0),	1,		-1 },
 	{ NULL,		  "spfm",	NULL,		SPTAG(1),	1,		-1 },
 	{ NULL,		  "spmail",	NULL,		SPTAG(2),	1,		-1 },
+	{ NULL,		  NULL,	"Webcam",		SPTAG(3),	1,		-1 },
 };
 
 /* layout(s) */
